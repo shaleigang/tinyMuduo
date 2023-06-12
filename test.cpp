@@ -10,44 +10,58 @@
 #include <iostream>
 #include <unistd.h>  // usleep
 
-void print()
-{
-    printf("tid=%d\n", tmuduo::CurrentThread::tid());
-}
+#include <muduo/base/ThreadPool.h>
+#include <muduo/base/CountDownLatch.h>
+#include <muduo/base/CurrentThread.h>
+#include <muduo/base/Logging.h>
 
-void printString(const std::string& str)
-{
-    std::cout << str;
-    usleep(100*1000);
-}
+#include <future>
 
-void test(int maxSize)
+class Mytask
 {
-    std::cout << tmuduo::Timestamp::now().toString() << " Test ThreadPool with max queue size = " << maxSize << std::endl;
-    tmuduo::ThreadPool pool("MainThreadPool");
-    pool.setMaxQueueSize(maxSize);
-    pool.start(5);
-
-    std::cout << "Adding... " << std::endl;
-    for (int i = 0; i < 100; ++i)
+    int delaySec_;
+    std::promise<std::string> prom;
+public:
+    explicit Mytask(int delaySec) : delaySec_(delaySec) {}
+    void run()
     {
-        char buf[32];
-        snprintf(buf, sizeof buf, "task %d", i);
-        pool.run(std::bind(printString, std::string(buf)));
+        printf("tid: %d, Delay %d run...\n", muduo::CurrentThread::tid(), delaySec_);
+        usleep(delaySec_ * 1000 * 1000);
+        prom.set_value(std::string("Dealy ") + std::to_string(delaySec_));
     }
 
-    tmuduo::CountDownLatch latch(1);
-    pool.run(std::bind(&tmuduo::CountDownLatch::countDown, &latch)); // latch的countDown()放入队列最后
-    latch.wait();  // 等待latch的countDown结束，由于是最后一个任务，保证了队列中所有任务执行结束。
-    pool.stop();
-    std::cout<< std::endl << tmuduo::Timestamp::now().toString() << " All tasks Done" << std::endl;
-}
+    auto getResult() { return prom.get_future(); }
+};
 
 int main()
 {
-    test(0);   // 队列无上限
-    test(1);   // 队列上限1
-    test(5);	// 队列上限5
-    test(10);	// 队列上限10
-    test(50);	// 队列上限50
+    muduo::ThreadPool pool("threadpool test");
+    pool.start(10); // 保证后续任务都加入到队列中
+
+    std::vector<std::shared_ptr<Mytask>> tasks;
+    // 任务入队
+    for(int i = 0; i < 5; i++){
+        tasks.emplace_back( new Mytask(rand() % 5) ); // 随机0~5秒
+        pool.run([=]{
+            tasks[i]->run();
+        });
+    }
+    // 异步等待结果
+    for(int i = 0; i < 5; i++){
+        pool.run([=]{
+            printf("tid: %d, Task %s done!\n",
+                   muduo::CurrentThread::tid(), tasks[i]->getResult().get().c_str());
+        });
+    }
+
+    LOG_WARN << "Done";
+
+    {  // 若去掉此处代码，并且任务数量小于队列容量，可能会导致队列中任务未全部执行完毕就关闭线程池退出程序。
+        muduo::CountDownLatch latch(1);
+        pool.run(std::bind(&muduo::CountDownLatch::countDown, &latch));
+        latch.wait();
+    }
+    pool.stop();
+
+    return 0;
 }
