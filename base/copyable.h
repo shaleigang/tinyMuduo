@@ -5,10 +5,14 @@
 #ifndef TINYMUDUO_COPYABLE_H
 #define TINYMUDUO_COPYABLE_H
 
-class copyable{
+namespace tmuduo {
+
+class copyable {
 protected:
     copyable() = default;
     ~copyable() = default;
 };
+
+} // namespace tmuduo
 
 #endif //TINYMUDUO_COPYABLE_H

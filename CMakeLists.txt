@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 project(tinyMuduo)
 add_subdirectory(base)
+add_subdirectory(net)
 add_executable(test test.cpp)
-target_link_libraries(test tmuduo_base pthread)
+target_link_libraries(test tmuduo_base tmuduo_net pthread)
