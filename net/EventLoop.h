@@ -30,6 +30,7 @@ public:
     void quit();
 
     void runInLoop(Functor cb);
+    void queueInLoop(Functor cb);
 
     void wakeup();
     void updateChannel(Channel* channel);
@@ -51,13 +52,16 @@ private:
     typedef std::vector<Channel*> ChannelList;
 
     void abortNotInLoopThread();
+    void handleRead();
+    void doPendingFunctors();
 
-    bool looping_;
+    std::atomic<bool> looping_;
     std::atomic<bool> quit_;
-    bool eventHandling_;
-    bool callingPendingFunctors_;
+    std::atomic<bool> eventHandling_;
+    std::atomic<bool> callingPendingFunctors_;
 
     const pid_t threadId_;
+    Timestamp pollReturnTime_;
 
     std::unique_ptr<Poller> poller_;
     int wakeupFd_;
