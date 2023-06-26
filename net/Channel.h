@@ -7,13 +7,12 @@
 
 #include "../base/Timestamp.h"
 #include "../base/noncopyable.h"
+#include "EventLoop.h"
 
 #include <functional>
 
 namespace tmuduo {
 namespace net {
-
-class EventLoop;
 
 class Channel : tmuduo::noncopyable {
 public:
@@ -43,6 +42,9 @@ public:
     void disableReading() { events_ &= ~kReadEvent; update(); }
     void disableWriting() { events_ &= ~kWriteEvent; update(); }
     void disableAll() { events_ = kNoneEvent; update(); }
+
+    int index() { return index_; }
+    void set_index(int idx) { index_ = idx; }
 
 private:
 

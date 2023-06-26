@@ -4,6 +4,7 @@
 
 #include "Channel.h"
 #include "EventLoop.h"
+#include <cassert>
 
 #include <poll.h>
 
@@ -54,7 +55,7 @@ void Channel::remove() {
 void Channel::handleEvent(tmuduo::Timestamp receiveTime) {
     std::shared_ptr<void> guard;
     if(tied_){
-        gurad = tie_.lock();
+        guard = tie_.lock();
         if(guard){
             handleEventWithGuard(receiveTime);
         }
@@ -81,7 +82,7 @@ void Channel::handleEventWithGuard(tmuduo::Timestamp receiveTime) {
     if (revents_ & (POLLERR | POLLNVAL)){
         if (errorCallback_) errorCallback_();
     }
-    if (revents_ & (POLLIN | POLLPRI | POLLRDHUP) {
+    if (revents_ & (POLLIN | POLLPRI | POLLRDHUP)) {
         if (readCallback_) readCallback_(receiveTime);
     }
     if (revents_ & POLLOUT){

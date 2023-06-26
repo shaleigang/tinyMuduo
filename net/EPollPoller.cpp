@@ -10,8 +10,8 @@
 #include <errno.h>
 #include <sys/epoll.h>
 #include <unistd.h>
+#include <string.h>
 
-using namespace tmuduo;
 using namespace tmuduo::net;
 
 namespace
@@ -21,11 +21,11 @@ const int kAdded = 1;
 const int kDeleted = 2;
 }
 
-EPollPoller::EPollPoller(tmuduo::net::EventLoop *loop)
+EPollPoller::EPollPoller(EventLoop *loop)
   : Poller(loop),
     epollfd_(::epoll_create1(EPOLL_CLOEXEC)),
     events_(kInitEventListSize){
-    if(epollfd_ < 0)
+//    if(epollfd_ < 0)
         // LOG
 }
 
@@ -33,18 +33,18 @@ EPollPoller::~EPollPoller() {
     ::close(epollfd_);
 }
 
-Timestamp EPollPoller::poll(int timeoutMs, tmuduo::net::Poller::ChannelList *activeChannels) {
+tmuduo::Timestamp EPollPoller::poll(int timeoutMs, Poller::ChannelList *activeChannels) {
     // LOG
     int numEvents = ::epoll_wait(epollfd_,
                                  &*events_.begin(),
                                  static_cast<int>(events_.size()),
                                  timeoutMs);
     int savedErrno = errno;
-    Timestamp now(Timestamp::now());
+    tmuduo::Timestamp now(tmuduo::Timestamp::now());
     if(numEvents > 0){
         // LOG
         fillActiveChannels(numEvents, activeChannels);
-        if(implicit_cast<size_t>(numEvents) == events_.size()){
+        if(static_cast<size_t>(numEvents) == events_.size()){
             events_.resize(events_.size() * 2);
         }
     }
@@ -63,7 +63,7 @@ Timestamp EPollPoller::poll(int timeoutMs, tmuduo::net::Poller::ChannelList *act
 void EPollPoller::fillActiveChannels(int numEvents,
                                      ChannelList* activeChannels) const
 {
-    assert(implicit_cast<size_t>(numEvents) <= events_.size());
+    assert(static_cast<size_t>(numEvents) <= events_.size());
     for (int i = 0; i < numEvents; ++i)
     {
         Channel* channel = static_cast<Channel*>(events_[i].data.ptr);
@@ -138,20 +138,20 @@ void EPollPoller::removeChannel(Channel* channel)
 void EPollPoller::update(int operation, Channel* channel)
 {
     struct epoll_event event;
-    memZero(&event, sizeof event);
+    memset(&event, 0, sizeof event);
     event.events = channel->events();
     event.data.ptr = channel;
     int fd = channel->fd();
     // LOG
-    if (::epoll_ctl(epollfd_, operation, fd, &event) < 0)
-    {
-        if (operation == EPOLL_CTL_DEL)
-        {
-            // LOG
-        }
-        else
-        {
-            // LOG
-        }
-    }
+//    if (::epoll_ctl(epollfd_, operation, fd, &event) < 0)
+//    {
+//        if (operation == EPOLL_CTL_DEL)
+//        {
+//            // LOG
+//        }
+//        else
+//        {
+//            // LOG
+//        }
+//    }
 }

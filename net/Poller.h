@@ -6,15 +6,15 @@
 #define TINYMUDUO_POLLER_H
 
 #include "../base/noncopyable.h"
+#include "../base/Timestamp.h"
+#include "Channel.h"
+#include "EventLoop.h"
 
 #include <vector>
 #include <map>
 
 namespace tmuduo {
 namespace net {
-
-class EventLoop;
-class Channel;
 
 class Poller : noncopyable {
 public:
@@ -23,7 +23,7 @@ public:
     Poller(EventLoop* loop) : ownerLoop_(loop) {}
     virtual ~Poller();
 
-    virtual Timestamp poll(int timeoutMs, ChannelList* activeChannels) = 0;
+    virtual tmuduo::Timestamp poll(int timeoutMs, ChannelList* activeChannels) = 0;
 
     virtual void updateChannel(Channel* channel) = 0;
 
@@ -35,9 +35,7 @@ public:
         return it != channels_.end() && it->second == channel;
     }
 
-    static Poller* newDefaultPoller(EventLoop* loop){
-        return new EPollPoller(loop);
-    }
+    static Poller* newDefaultPoller(EventLoop* loop);
 
     void assertInLoopThread() const{
         ownerLoop_->assertInLoopThread();
@@ -52,7 +50,7 @@ private:
 
 };
 
-} namespace net
+} // namespace net
 } // namespace tmuduo
 
 #endif //TINYMUDUO_POLLER_H

@@ -6,6 +6,7 @@
 #define TINYMUDUO_EPOLLPOLLER_H
 
 #include "Poller.h"
+#include "../base/Timestamp.h"
 
 #include <vector>
 
@@ -19,7 +20,7 @@ public:
     EPollPoller(EventLoop* loop);
     ~EPollPoller() override;
 
-    Timestamp poll(int timeoutMs, ChannelList* activeChannels) override;
+    tmuduo::Timestamp poll(int timeoutMs, ChannelList* activeChannels) override;
     void updateChannel(Channel* channel) override;
     void removeChannel(Channel* channel) override;
 
