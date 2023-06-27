@@ -12,6 +12,7 @@
 #include <sys/socket.h>
 #include <sys/uio.h>
 #include <unistd.h>
+#include <cstring>
 
 using namespace tmuduo;
 using namespace tmuduo::net;
@@ -113,4 +114,36 @@ void sockets::shutdownWrite(int sockfd)
     {
         LOG_ERROR("sockets::shutdownWrite");
     }
+}
+
+int sockets::getSocketError(int sockfd) {
+    int optval;
+    socklen_t optlen = static_cast<socklen_t>(sizeof optval);
+
+    if (::getsockopt(sockfd, SOL_SOCKET, SO_ERROR, &optval, &optlen) < 0) {
+        return errno;
+    }
+    else {
+        return optval;
+    }
+}
+
+struct sockaddr_in sockets::getLocalAddr(int sockfd) {
+    struct sockaddr_in localaddr;
+    memset(&localaddr, 0,  sizeof localaddr);
+    socklen_t addrlen = static_cast<socklen_t>(sizeof localaddr);
+    if (::getsockname(sockfd, (struct sockaddr *)(&localaddr), &addrlen) < 0) {
+        LOG_ERROR("sockets::getLocalAddr");
+    }
+    return localaddr;
+}
+
+struct sockaddr_in sockets::getPeerAddr(int sockfd) {
+    struct sockaddr_in peeraddr;
+    memset(&peeraddr, 0, sizeof peeraddr);
+    socklen_t addrlen = static_cast<socklen_t>(sizeof peeraddr);
+    if (::getpeername(sockfd, (struct sockaddr *)(&peeraddr), &addrlen) < 0) {
+        LOG_ERROR("sockets::getPeerAddr");
+    }
+    return peeraddr;
 }

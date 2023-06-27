@@ -21,7 +21,7 @@ public:
     typedef std::vector<Channel*> ChannelList;
 
     Poller(EventLoop* loop) : ownerLoop_(loop) {}
-    virtual ~Poller();
+    virtual ~Poller() = default;
 
     virtual tmuduo::Timestamp poll(int timeoutMs, ChannelList* activeChannels) = 0;
 

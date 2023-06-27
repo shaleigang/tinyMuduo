@@ -22,6 +22,11 @@ ssize_t write(int sockfd, const void *buf, size_t count);
 void close(int sockfd);
 void shutdownWrite(int sockfd);
 
+int getSocketError(int sockfd);
+
+struct sockaddr_in getLocalAddr(int sockfd);
+struct sockaddr_in getPeerAddr(int sockfd);
+
 } // namespace sockets
 } // namespace net
 } // namespace tmuduo

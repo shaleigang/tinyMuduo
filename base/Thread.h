@@ -25,7 +25,7 @@ public:
     void join();
     void detach();
 
-    pid_t tid() { return tid_; };
+    pid_t tid() const { return tid_; };
     inline const string& name() const { return name_; };
     static int numCreated()  { return numCreated_; };
 

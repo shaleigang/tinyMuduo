@@ -42,6 +42,8 @@ public:
     void disableReading() { events_ &= ~kReadEvent; update(); }
     void disableWriting() { events_ &= ~kWriteEvent; update(); }
     void disableAll() { events_ = kNoneEvent; update(); }
+    bool isWriting() const { return events_ & kWriteEvent; }
+    bool isReading() const { return events_ & kReadEvent; }
 
     int index() { return index_; }
     void set_index(int idx) { index_ = idx; }

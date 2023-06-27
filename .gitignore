@@ -1,7 +1,7 @@
 build/
 .idea/
 cmake-build-debug/
-test.cpp
+#echoServer.cpp
 
 # Prerequisites
 *.d
