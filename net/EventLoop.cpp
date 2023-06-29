@@ -48,6 +48,7 @@ EventLoop::EventLoop()
     currentActiveChannel_(nullptr){
 
     LOG_DEBUG("EventLoop created in thread %d", threadId_);
+//    LOG_DEBUG("wakeup fd: %d", wakeupFd_);
     if(t_loopInThisThread){
         LOG_FATAL("Another EventLoop exists in this thread %d", threadId_);
     }

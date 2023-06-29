@@ -17,7 +17,7 @@ namespace net {
 
 class EPollPoller : public Poller {
 public:
-    EPollPoller(EventLoop* loop);
+    explicit EPollPoller(EventLoop* loop);
     ~EPollPoller() override;
 
     tmuduo::Timestamp poll(int timeoutMs, ChannelList* activeChannels) override;

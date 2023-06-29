@@ -51,7 +51,7 @@ public:
     void ensureWritableBytes(size_t len);
     void append(const char* data, size_t len);
 
-    size_t readFd(int fd, int* savedErrno);
+    ssize_t readFd(int fd, int* savedErrno);
 
 private:
     char* begin() { return &*buffer_.begin(); }

@@ -22,17 +22,18 @@ void onMessage(const TcpConnectionPtr &conn,
                Buffer *buf,
                Timestamp time) {
     tmuduo::string msg(buf->retrieveAllAsString());
-    LOG_INFO("%s echo %d bytes, data received at", conn->name().c_str(), msg.size(), time.toString().c_str());
+//    LOG_INFO("%s echo %d bytes, data received at %s", conn->name().c_str(), msg.size(), time.toString().c_str());
     conn->send(msg);
 }
 
 int main(int argc, const char *argv[])
 {
     EventLoop loop;
-    InetAddress addr("127.0.0.1", 8988);
+    InetAddress addr("192.168.26.15", 8988);
     TcpServer server(&loop, addr, "echo");
     server.setConnectionCallback(&onConnection);
     server.setMessageCallback(&onMessage);
+    server.setThreadNum(5);
     server.start();
     loop.loop();
     return 0;

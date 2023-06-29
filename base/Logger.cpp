@@ -27,6 +27,7 @@ void Logger::log(int level, const char* logMsgFormat, ...) {
             pre = "[INFO ]"; break;
         case ERROR:
             pre = "[ERROR]"; break;
+
         case FATAL:
             pre = "[FATAL]"; break;
         case DEBUG:

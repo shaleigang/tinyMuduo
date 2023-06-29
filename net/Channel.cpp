@@ -24,7 +24,7 @@ Channel::Channel(tmuduo::net::EventLoop *loop, int fd)
     logHup_(true),
     tied_(false),
     eventHandling_(false),
-    addedToLoop_(true){
+    addedToLoop_(false){
 
 }
 

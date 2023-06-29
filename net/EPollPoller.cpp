@@ -5,12 +5,13 @@
 #include "EPollPoller.h"
 #include "Channel.h"
 #include "Poller.h"
+#include "../base/Logger.h"
 
-#include <assert.h>
-#include <errno.h>
+#include <cassert>
+#include <cerrno>
 #include <sys/epoll.h>
 #include <unistd.h>
-#include <string.h>
+#include <cstring>
 
 using namespace tmuduo::net;
 
@@ -25,8 +26,8 @@ EPollPoller::EPollPoller(EventLoop *loop)
   : Poller(loop),
     epollfd_(::epoll_create1(EPOLL_CLOEXEC)),
     events_(kInitEventListSize){
-//    if(epollfd_ < 0)
-        // LOG
+    if(epollfd_ < 0)
+        LOG_ERROR("epoll create error");
 }
 
 EPollPoller::~EPollPoller() {
@@ -34,7 +35,7 @@ EPollPoller::~EPollPoller() {
 }
 
 tmuduo::Timestamp EPollPoller::poll(int timeoutMs, Poller::ChannelList *activeChannels) {
-    // LOG
+//    LOG_DEBUG("epoll polling");
     int numEvents = ::epoll_wait(epollfd_,
                                  &*events_.begin(),
                                  static_cast<int>(events_.size()),
@@ -42,7 +43,7 @@ tmuduo::Timestamp EPollPoller::poll(int timeoutMs, Poller::ChannelList *activeCh
     int savedErrno = errno;
     tmuduo::Timestamp now(tmuduo::Timestamp::now());
     if(numEvents > 0){
-        // LOG
+//        LOG_DEBUG("epoll have active event");
         fillActiveChannels(numEvents, activeChannels);
         if(static_cast<size_t>(numEvents) == events_.size()){
             events_.resize(events_.size() * 2);
@@ -53,8 +54,8 @@ tmuduo::Timestamp EPollPoller::poll(int timeoutMs, Poller::ChannelList *activeCh
     }
     else{
         if(savedErrno != EINTR){
-            // errno = savedErrno;
-            // LOG
+             errno = savedErrno;
+            LOG_ERROR("epoll wait error");
         }
     }
     return now;
@@ -76,7 +77,7 @@ void EPollPoller::updateChannel(Channel* channel)
 {
     Poller::assertInLoopThread();
     const int index = channel->index();
-    // LOG
+//    LOG_DEBUG("updating channel %d", channel->fd());
     if (index == kNew || index == kDeleted)
     {
         int fd = channel->fd();
@@ -93,10 +94,10 @@ void EPollPoller::updateChannel(Channel* channel)
 
         channel->set_index(kAdded);
         update(EPOLL_CTL_ADD, channel);
+//        LOG_DEBUG("fd: %d added to Poller", channel->fd());
     }
     else
     {
-        // update existing one with EPOLL_CTL_MOD/DEL
         int fd = channel->fd();
         (void)fd;
         assert(channels_.find(fd) != channels_.end());
@@ -142,16 +143,16 @@ void EPollPoller::update(int operation, Channel* channel)
     event.events = channel->events();
     event.data.ptr = channel;
     int fd = channel->fd();
-    // LOG
-//    if (::epoll_ctl(epollfd_, operation, fd, &event) < 0)
-//    {
-//        if (operation == EPOLL_CTL_DEL)
-//        {
-//            // LOG
-//        }
-//        else
-//        {
-//            // LOG
-//        }
-//    }
+//     LOG
+    if (::epoll_ctl(epollfd_, operation, fd, &event) < 0)
+    {
+        if (operation == EPOLL_CTL_DEL)
+        {
+            // LOG
+        }
+        else
+        {
+            // LOG
+        }
+    }
 }

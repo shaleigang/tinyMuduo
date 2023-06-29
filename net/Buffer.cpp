@@ -3,6 +3,7 @@
 //
 
 #include "Buffer.h"
+#include "../base/Logger.h"
 
 #include <cstring>
 #include <cassert>
@@ -89,7 +90,7 @@ void Buffer::append(const char *data, size_t len) {
     writerIndex_ += len;
 }
 
-size_t Buffer::readFd(int fd, int *savedErrno) {
+ssize_t Buffer::readFd(int fd, int *savedErrno) {
     char extrabuf[65536];
     struct iovec vec[2];
     const size_t writable = writableBytes();
@@ -109,4 +110,5 @@ size_t Buffer::readFd(int fd, int *savedErrno) {
         writerIndex_ = buffer_.size();
         append(extrabuf, n - writable);
     }
+    return n;
 }
