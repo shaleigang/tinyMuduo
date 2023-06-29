@@ -1,8 +1,8 @@
 //
 // Created by sha on 6/11/23.
-// 采用 C++ 11 的std::thread 替代原本的实现
-// 采用 C++ 11 的std::atomic 替代原本的实现
+// 通过一个void() Func和name构造Thread实例
 // 为实现thread的start()功能，使用std::shared_ptr管理指向std::thread的指针
+// 初始化时不创建thread实例，start()中才创建
 //
 
 #ifndef TINYMUDUO_THREAD_H
@@ -38,6 +38,7 @@ private:
     ThreadFunc func;
     pid_t tid_;
     string name_;
+    // 用一个静态变量记录已创建的线程数
     static atomic_int32_t numCreated_;
 };
 

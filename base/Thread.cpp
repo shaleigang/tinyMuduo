@@ -6,6 +6,8 @@
 #include "CurrentThread.h"
 #include <semaphore.h>
 
+#include <memory>
+
 using namespace tmuduo;
 
 Thread::Thread(ThreadFunc &&f, const string &name)
@@ -22,11 +24,14 @@ void Thread::start() {
         started_ = true;
         sem_t sem;
         sem_init(&sem, false, 0);
-        thread_ = std::shared_ptr<std::thread>(new std::thread([&](){
+        // 传入一个lambda表达式，线程开始执行
+        // 线程首先获取tid，然后再执行func，所以要在tid获取结束之后，线程才算真正开始运行
+        // 所以这里采用一个信号量进行同步操作，因为tid()执行的线程和start()运行的线程不同，需要同步
+        thread_ = std::make_shared<std::thread>([&](){
             tid_ = CurrentThread::tid();
             sem_post(&sem);
             func();
-        }));
+        });
         sem_wait(&sem);
     }
 }

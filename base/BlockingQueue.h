@@ -1,5 +1,8 @@
 //
 // Created by sha on 6/11/23.
+// 阻塞队列的核心是put()和get()
+// 1. put()向队列中添加任务， get()从队列中取任务
+// 2. 使用std::mutex和std::condition_variable实现互斥访问和线程同步
 //
 
 #ifndef TINYMUDUO_BLOCKINGQUEUE_H
@@ -8,6 +11,7 @@
 #include <mutex>
 #include <condition_variable>
 #include <deque>
+#include "types.h"
 
 namespace tmuduo {
 

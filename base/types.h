@@ -1,5 +1,6 @@
 //
 // Created by sha on 6/11/23.
+// 使用using声明几个常用类型，方便使用
 //
 
 #ifndef TINYMUDUO_TYPES_H

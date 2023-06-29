@@ -33,7 +33,7 @@ int main(int argc, const char *argv[])
     TcpServer server(&loop, addr, "echo");
     server.setConnectionCallback(&onConnection);
     server.setMessageCallback(&onMessage);
-    server.setThreadNum(5);
+//    server.setThreadNum(5);
     server.start();
     loop.loop();
     return 0;

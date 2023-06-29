@@ -1,5 +1,9 @@
 //
 // Created by sha on 6/12/23.
+// 线程池中的多个Thread实例指针存放在vector中，用unique_ptr管理指针
+// 线程池构造时只是初始化name， 线程是在start()中创建的
+// 同样用vector存储需要执行的task，实现方式和阻塞队列相似，相当于一个有界阻塞队列
+// 所有线程执行的函数就是一个while循环，不断从队列中取任务，然后执行
 //
 
 #ifndef TINYMUDUO_THREADPOOL_H
@@ -43,7 +47,9 @@ private:
     condition_variable notFull_;
     string name_;
     Task threadInitCallback_;
+    // 存放线程指针的vector
     std::vector<std::unique_ptr<Thread>> threads_;
+    // 任务队列
     std::deque<Task> queue_;
     size_t maxQueueSize_;
     bool running_;
