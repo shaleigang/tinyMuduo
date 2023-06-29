@@ -26,6 +26,8 @@ EventLoopThread::~EventLoopThread() {
 EventLoop* EventLoopThread::startLoop() {
     thread_.start();
 
+    // 和之前Thread类型的方法
+    // 通过线程同步，startLoop()等待线程执行threadFunc()函数创建完成EventLoop并获取
     EventLoop* loop = nullptr;
     {
         std::unique_lock<mutex> lock(mutex_);

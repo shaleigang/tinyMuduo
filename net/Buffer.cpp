@@ -91,6 +91,7 @@ void Buffer::append(const char *data, size_t len) {
 }
 
 ssize_t Buffer::readFd(int fd, int *savedErrno) {
+    // 栈上数组
     char extrabuf[65536];
     struct iovec vec[2];
     const size_t writable = writableBytes();

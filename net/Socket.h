@@ -18,6 +18,7 @@ public:
     explicit Socket(int sockfd)
             : sockfd_(sockfd) {}
 
+    // 析构函数负责关闭文件描述符
     ~Socket();
 
     int fd() const { return sockfd_; }

@@ -36,19 +36,24 @@ public:
     size_t writableBytes() const { return buffer_.size() - writerIndex_; }
     size_t prependableBytes() const { return readerIndex_; }
 
+    // 返回第一个可写位置的指针
     char* beginWrite() { return begin() + writerIndex_; }
     const char* beginWrite() const { return begin() + writerIndex_; }
 
+    // 返回指向可读消息头部的指针
     const char* peek() const { return begin() + readerIndex_; }
     const char* findCRLF() const;
     const char* findCRLF(const char* start) const;
     const char* findEOL() const;
     const char* findEOL(const char* start) const;
+    // 消费Buffer中的消息
     void retrieve(size_t len);
     void retrieveAll();
     string retrieveAsString(size_t len);
     string retrieveAllAsString();
+    // 如果剩余容量不满足要求，尝试double容量
     void ensureWritableBytes(size_t len);
+    // 向Buffer中写入数据
     void append(const char* data, size_t len);
 
     ssize_t readFd(int fd, int* savedErrno);
@@ -56,6 +61,7 @@ public:
 private:
     char* begin() { return &*buffer_.begin(); }
     const char* begin() const { return &*buffer_.begin(); }
+    // 扩展vector容量，首先将所有信息移动至vector前端，看看实际剩余容量再决定下一步操作
     void makeSpace(size_t len);
 
     std::vector<char> buffer_;
