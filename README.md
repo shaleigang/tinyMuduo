@@ -1,7 +1,5 @@
 # tinyMuduo
 A tiny version of muduo using C++ 11.  For learning purposes only.
-## 0. 架构
-图片drawing
 ## 1. 简介
 * base
 主要包含封装的Thread、ThreadPool、Logger、TimeStamp类，另外实现了BlockingQueue和CountDownLatch
@@ -74,6 +72,6 @@ A tiny version of muduo using C++ 11.  For learning purposes only.
 * Accepter
 用于监听连接事件，接受新的TCP连接
 * TcpServer
-包含一个Accepter，一个线程池，详细见文档顶部图片
+包含一个Accepter，一个线程池。
 
 
