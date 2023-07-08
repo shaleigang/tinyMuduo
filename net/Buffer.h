@@ -42,19 +42,26 @@ public:
 
     // 返回指向可读消息头部的指针
     const char* peek() const { return begin() + readerIndex_; }
+    int32_t peekInt32() const;
     const char* findCRLF() const;
     const char* findCRLF(const char* start) const;
     const char* findEOL() const;
     const char* findEOL(const char* start) const;
+    int32_t readInt32();
     // 消费Buffer中的消息
     void retrieve(size_t len);
     void retrieveAll();
     string retrieveAsString(size_t len);
     string retrieveAllAsString();
+    void retrieveInt32();
     // 如果剩余容量不满足要求，尝试double容量
     void ensureWritableBytes(size_t len);
+    void prepend(const void* /*restrict*/ data, size_t len);
+    void prependInt32(int32_t x);
     // 向Buffer中写入数据
     void append(const char* data, size_t len);
+    void append(const void* /*restrict*/ data, size_t len);
+    void appendInt32(int32_t x);
 
     ssize_t readFd(int fd, int* savedErrno);
 
