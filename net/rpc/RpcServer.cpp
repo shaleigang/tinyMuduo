@@ -4,7 +4,11 @@
 
 #include <google/protobuf/descriptor.h>
 
+#include <memory>
+
 #include "RpcServer.h"
+#include "../../base/Logger.h"
+#include "RpcChannel.h"
 
 using namespace tmuduo;
 using namespace tmuduo::net;
@@ -26,4 +30,16 @@ void RpcServer::registerService(google::protobuf::Service *service) {
 
 void RpcServer::start() {
     server_.start();
+}
+
+void RpcServer::onConnection(const TcpConnectionPtr& conn)
+{
+    LOG_INFO("RpcServer UP");
+    if (conn->connected())
+    {
+        RpcChannelPtr channel(new RpcChannel(conn));
+        channel->setServices(&services_);
+        conn->setMessageCallback(
+                std::bind(&RpcChannel::onMessage, channel.get(), _1, _2, _3));
+    }
 }

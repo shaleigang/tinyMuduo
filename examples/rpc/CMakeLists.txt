@@ -1,0 +1,2 @@
+add_executable(rpc_server rpc_server.cpp)
+target_link_libraries(rpc_server tmuduo_rpc tmuduo_net tmuduo_base pthread)

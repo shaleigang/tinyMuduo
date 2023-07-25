@@ -8,16 +8,21 @@
 #include <memory>
 #include <map>
 #include <google/protobuf/service.h>
+#include <google/protobuf/descriptor.h>
+#include <google/protobuf/message.h>
+#include <vector>
 
-#include "RpcCodec.h"
+#include "MyPB_protocol.h"
+#include "MyPB_coder.h"
 #include "../TcpConnection.h"
+#include "../../base/Logger.h"
 
 namespace tmuduo {
 namespace net {
 
 class RpcChannel : public google::protobuf::RpcChannel {
 public:
-    RpcChannel();
+//    RpcChannel();
     explicit RpcChannel(const TcpConnectionPtr& conn);
     ~RpcChannel() override;
 
@@ -37,12 +42,12 @@ public:
                    Buffer* buf,
                    Timestamp receiveTime);
 private:
-    void onRpcMessage(const TcpConnectionPtr&,
-                      const MessagePtr&,
-                      Timestamp);
-    void doneCallback(::google::protobuf::Message* response, int64_t id);
+    void doneCallback(::google::protobuf::Message* response, string &id);
 
     TcpConnectionPtr conn_;
+    MyPBCoder coder_;
+//    std::vector<std::shared_ptr<MyPBProtocol>> messages_;
+    std::vector<AbstractProtocol::s_ptr> messages_;
     const std::map<string, google::protobuf::Service*>* services_;
 };
 

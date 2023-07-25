@@ -36,6 +36,7 @@ public:
     bool disconnected() const { return state_ == kDisconnected; }
 
     void send(const string& message);
+    void send(Buffer* message);
     void shutdown();
 
     void setConnectionCallback(const ConnectionCallback& cb) { connectionCallback_ = cb; }

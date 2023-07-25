@@ -68,6 +68,15 @@ void TcpConnection::send(const string &message) {
     }
 }
 
+void TcpConnection::send(Buffer* buf)
+{
+    if (state_ == kConnected)
+    {
+        sendInLoop(buf->peek(), buf->readableBytes());
+        buf->retrieveAll();
+    }
+}
+
 void TcpConnection::shutdown() {
     if (state_ == kConnected) {
         setState(kDisconnecting);
