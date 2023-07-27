@@ -15,8 +15,8 @@ namespace net {
 
 class AbstractCoder {
 public:
-    virtual void encode(std::vector<AbstractProtocol::s_ptr>& messages, Buffer* buf);
-    virtual void decode(std::vector<AbstractProtocol::s_ptr>& out_messages, Buffer* buf);
+    virtual void encode(std::vector<AbstractProtocol::s_ptr>& messages, Buffer* buf) = 0;
+    virtual void decode(std::vector<AbstractProtocol::s_ptr>& out_messages, Buffer* buf) = 0;
 
     virtual ~AbstractCoder() {}
 };
