@@ -5,9 +5,9 @@
 #ifndef TINYMUDUO_CHANNEL_H
 #define TINYMUDUO_CHANNEL_H
 
-#include "../base/Timestamp.h"
-#include "../base/noncopyable.h"
-#include "EventLoop.h"
+#include <tinyMuduo/base/noncopyable.h>
+#include <tinyMuduo/base/Timestamp.h>
+#include <tinyMuduo/net/EventLoop.h>
 
 #include <functional>
 

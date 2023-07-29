@@ -5,8 +5,8 @@
 #ifndef TINYMUDUO_POLLER_H
 #define TINYMUDUO_POLLER_H
 
-#include <tinyMuduo//base/noncopyable.h>
-#include <tinyMuduo//base/Timestamp.h>
+#include <tinyMuduo/base/noncopyable.h>
+#include <tinyMuduo/base/Timestamp.h>
 #include <tinyMuduo/net/Channel.h>
 #include <tinyMuduo/net/EventLoop.h>
 
