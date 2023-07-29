@@ -2,11 +2,11 @@
 // Created by slg on 6/25/23.
 //
 
-#include "../base/Logger.h"
-#include "../base/Timestamp.h"
-#include "../net/TcpServer.h"
-#include "../net/EventLoop.h"
-#include "../net/TcpConnection.h"
+#include <tinyMuduo/base/Logger.h>
+#include <tinyMuduo/base/Timestamp.h>
+#include <tinyMuduo/net/TcpServer.h>
+#include <tinyMuduo/net/EventLoop.h>
+#include <tinyMuduo/net/TcpConnection.h>
 
 using namespace tmuduo;
 using namespace tmuduo::net;

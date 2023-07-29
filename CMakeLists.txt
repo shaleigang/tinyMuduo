@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 project(tinyMuduo)
-add_subdirectory(base)
-add_subdirectory(net)
+include_directories(${PROJECT_SOURCE_DIR})
+add_subdirectory(tinyMuduo/base)
+add_subdirectory(tinyMuduo/net)
 add_subdirectory(examples)
