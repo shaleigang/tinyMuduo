@@ -1,6 +1,6 @@
 # tinyMuduo
-A tiny version of muduo using C++ 11.  For learning purposes only.
-TODO: rpc
+A tiny version of muduo without Boost. For learning purposes only.
+
 ## 1. 简介
 * base
 主要包含封装的Thread、ThreadPool、Logger、TimeStamp类，另外实现了BlockingQueue和CountDownLatch
