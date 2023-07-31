@@ -1,5 +1,6 @@
 # tinyMuduo
-A tiny version of muduo without Boost. For learning purposes only.
+tinyMuduo是一个简易版本的muduo网络库，消除对Boost的依赖。并在tinyMuduo的基础上，结合protobuf，封装了一个RPC框架。
+For learning purposes only.
 
 ## 1. 简介
 * base
