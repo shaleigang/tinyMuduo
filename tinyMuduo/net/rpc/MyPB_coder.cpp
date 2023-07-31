@@ -28,6 +28,9 @@ void MyPBCoder::encode(std::vector<AbstractProtocol::s_ptr> &messages, tmuduo::n
 
 void MyPBCoder::decode(std::vector<AbstractProtocol::s_ptr> &out_messages, tmuduo::net::Buffer *buf) {
     while(1) {
+        if(buf->readableBytes() < 4) {
+            break;
+        }
         int32_t pk_len = buf->peekInt32();
         if(pk_len > buf->readableBytes()) {
             break;
@@ -70,7 +73,7 @@ const char* MyPBCoder::encodeMyPB(std::shared_ptr<MyPBProtocol> message, int &le
     LOG_DEBUG("msg_id = %s", message->m_msg_id.c_str());
     int pk_len = 24 + message->m_msg_id.length() + message->m_method_name.length() + message->m_err_info.length() +
                  message->m_pb_data.length();
-    LOG_DEBUG("pk_len = %", pk_len);
+    LOG_DEBUG("pk_len = %d", pk_len);
 
     char *buf = reinterpret_cast<char *>(malloc(pk_len));
     char *tmp = buf;

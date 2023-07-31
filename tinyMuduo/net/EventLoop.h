@@ -8,16 +8,19 @@
 #include <tinyMuduo/base/noncopyable.h>
 #include <tinyMuduo/base/Timestamp.h>
 #include <tinyMuduo/base/CurrentThread.h>
+#include <tinyMuduo/net/TimerId.h>
 
 #include <functional>
 #include <vector>
 #include <atomic>
+#include <any>
 
 namespace tmuduo {
 namespace net {
 
 class Channel;
 class Poller;
+class TimerQueue;
 
 class EventLoop : noncopyable {
 public:
@@ -46,7 +49,25 @@ public:
     bool isInLoopThread() const { return threadId_ == CurrentThread::tid(); }
     bool eventHandling() const { return eventHandling_; }
 
+    void setContext(const std::any& context)
+    { context_ = context; }
+
+    const std::any& getContext() const
+    { return context_; }
+
+    std::any* getMutableContext()
+    { return &context_; }
+
+
     static EventLoop* getEventLoopOfCurrentThread();
+
+    TimerId runAt(Timestamp time, std::function<void()> cb);
+
+    TimerId runAfter(double delay, TimerCallback cb);
+
+    TimerId runEvery(double interval, TimerCallback cb);
+
+    void cancel(TimerId timerId);
 
 private:
     typedef std::vector<Channel*> ChannelList;
@@ -72,6 +93,10 @@ private:
 
     mutable std::mutex mutex_;
     std::vector<Functor> pendingFunctors_;
+
+    std::unique_ptr<TimerQueue> timerQueue_;
+
+    std::any context_;
 };
 
 } // namespace net

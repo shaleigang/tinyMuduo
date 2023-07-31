@@ -147,3 +147,10 @@ struct sockaddr_in sockets::getPeerAddr(int sockfd) {
     }
     return peeraddr;
 }
+
+bool sockets::isSelfConnect(int sockfd) {
+    struct sockaddr_in localaddr = getLocalAddr(sockfd);
+    struct sockaddr_in peeraddr = getPeerAddr(sockfd);
+    return localaddr.sin_port == peeraddr.sin_port
+           && memcmp(&localaddr.sin_addr, &peeraddr.sin_addr, sizeof localaddr.sin_addr) == 0;
+}

@@ -26,6 +26,7 @@ void RpcServer::setThreadNum(int n) {
 void RpcServer::registerService(google::protobuf::Service *service) {
     const google::protobuf::ServiceDescriptor* desc = service->GetDescriptor();
     services_[desc->full_name()] = service;
+    LOG_DEBUG("reg service %s", desc->full_name().c_str());
 }
 
 void RpcServer::start() {
@@ -34,12 +35,15 @@ void RpcServer::start() {
 
 void RpcServer::onConnection(const TcpConnectionPtr& conn)
 {
-    LOG_INFO("RpcServer UP");
     if (conn->connected())
     {
         RpcChannelPtr channel(new RpcChannel(conn));
         channel->setServices(&services_);
         conn->setMessageCallback(
                 std::bind(&RpcChannel::onMessage, channel.get(), _1, _2, _3));
+        conn->setContext(channel);
+    }
+    else {
+        conn->setContext(RpcChannelPtr());
     }
 }

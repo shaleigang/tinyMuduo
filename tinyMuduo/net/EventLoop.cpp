@@ -6,6 +6,7 @@
 #include <tinyMuduo/net/EventLoop.h>
 #include <tinyMuduo/base/Logger.h>
 #include <tinyMuduo/base/CurrentThread.h>
+#include <tinyMuduo/net/TimerQueue.h>
 
 #include <sys/eventfd.h>
 #include <unistd.h>
@@ -43,6 +44,7 @@ EventLoop::EventLoop()
     callingPendingFunctors_(false),
     threadId_(CurrentThread::tid()),
     poller_(Poller::newDefaultPoller(this)),
+    timerQueue_(new TimerQueue(this)),
     wakeupFd_(createEventfd()),
     wakeupChannel_(new Channel(this, wakeupFd_)),
     currentActiveChannel_(nullptr){
@@ -171,4 +173,23 @@ void EventLoop::doPendingFunctors() {
         functor();
     }
     callingPendingFunctors_ = false;
+}
+
+TimerId EventLoop::runAt(Timestamp time, TimerCallback cb) {
+    return timerQueue_->addTimer(std::move(cb), time, 0.0);
+}
+
+TimerId EventLoop::runAfter(double delay, TimerCallback cb) {
+    Timestamp time(addTime(Timestamp::now(), delay));
+    return runAt(time, std::move(cb));
+}
+
+TimerId EventLoop::runEvery(double interval, TimerCallback cb) {
+    Timestamp time(addTime(Timestamp::now(), interval));
+    return timerQueue_->addTimer(std::move(cb), time, interval);
+}
+
+
+void EventLoop::cancel(TimerId timerId) {
+    return timerQueue_->cancel(timerId);
 }

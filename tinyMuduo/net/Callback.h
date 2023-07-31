@@ -5,6 +5,9 @@
 #ifndef TINYMUDUO_CALLBACK_H
 #define TINYMUDUO_CALLBACK_H
 
+#include <tinyMuduo/net/Buffer.h>
+#include <tinyMuduo/base/Timestamp.h>
+
 namespace tmuduo {
 namespace net {
 
@@ -14,6 +17,7 @@ using std::placeholders::_1;
 using std::placeholders::_2;
 using std::placeholders::_3;
 
+typedef std::function<void()> TimerCallback;
 typedef std::shared_ptr<TcpConnection> TcpConnectionPtr;
 typedef std::function<void(const TcpConnectionPtr &)> ConnectionCallback;
 typedef std::function<void(const TcpConnectionPtr &)> CloseCallback;

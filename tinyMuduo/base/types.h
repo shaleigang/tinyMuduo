@@ -17,6 +17,7 @@ namespace tmuduo{
 
 using std::string;
 using std::atomic_int32_t;
+using std::atomic_int64_t;
 using std::thread;
 using std::mutex;
 using std::condition_variable;

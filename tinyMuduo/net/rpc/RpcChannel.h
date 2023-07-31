@@ -22,7 +22,7 @@ namespace net {
 
 class RpcChannel : public google::protobuf::RpcChannel {
 public:
-//    RpcChannel();
+    RpcChannel();
     explicit RpcChannel(const TcpConnectionPtr& conn);
     ~RpcChannel() override;
 
@@ -44,11 +44,21 @@ public:
 private:
     void doneCallback(::google::protobuf::Message* response, string &id);
 
+    struct OutstandingCall {
+        ::google::protobuf::Message* response;
+        ::google::protobuf::Closure* done;
+    };
+
+    mutex mutex_;
+    std::map<string, OutstandingCall> outstandings_;
+
     TcpConnectionPtr conn_;
     MyPBCoder coder_;
 //    std::vector<std::shared_ptr<MyPBProtocol>> messages_;
     std::vector<AbstractProtocol::s_ptr> messages_;
     const std::map<string, google::protobuf::Service*>* services_;
+
+    std::atomic_uint64_t id_;
 };
 
 typedef std::shared_ptr<RpcChannel> RpcChannelPtr;

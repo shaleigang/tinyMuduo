@@ -155,7 +155,7 @@ void TcpConnection::handleWrite() {
 
 void TcpConnection::handleClose() {
     loop_->assertInLoopThread();
-    LOG_DEBUG("fd = %d state = %d", channel_->fd(), (int)state_);
+    LOG_DEBUG("TcpConnection::handleClose fd = %d state = %d", channel_->fd(), (int)state_);
     assert(state_ == kConnected || state_ == kDisconnecting);
     setState(kDisconnected);
     channel_->disableAll();
@@ -218,5 +218,22 @@ void TcpConnection::shutdownInLoop() {
     loop_->assertInLoopThread();
     if (!channel_->isWriting()) {
         socket_->shutdownWrite();
+    }
+}
+
+void TcpConnection::forceClose() {
+    if (state_ == kConnected || state_ == kDisconnecting)
+    {
+        setState(kDisconnecting);
+        loop_->queueInLoop(std::bind(&TcpConnection::forceCloseInLoop, shared_from_this()));
+    }
+}
+
+void TcpConnection::forceCloseInLoop() {
+    loop_->assertInLoopThread();
+    if (state_ == kConnected || state_ == kDisconnecting)
+    {
+        // as if we received 0 byte in handleRead();
+        handleClose();
     }
 }

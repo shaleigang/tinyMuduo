@@ -24,7 +24,9 @@ public:
         response->set_ret_code(123);
         response->set_res_info(Timestamp::now().toString());
         response->set_order_id("123456");
-        done->Run();
+        if(done) {
+            done->Run();
+        }
     }
 };
 

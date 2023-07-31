@@ -27,6 +27,8 @@ int getSocketError(int sockfd);
 struct sockaddr_in getLocalAddr(int sockfd);
 struct sockaddr_in getPeerAddr(int sockfd);
 
+bool isSelfConnect(int sockfd);
+
 } // namespace sockets
 } // namespace net
 } // namespace tmuduo

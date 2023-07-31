@@ -15,6 +15,7 @@
 #include <tinyMuduo/net/Channel.h>
 #include <tinyMuduo/net/Callback.h>
 
+#include <any>
 
 namespace tmuduo {
 namespace net {
@@ -35,9 +36,17 @@ public:
     bool connected() const { return state_ == kConnected; }
     bool disconnected() const { return state_ == kDisconnected; }
 
+    void setContext(const std::any& context) { context_ = context; }
+
+    const std::any& getContext() const { return context_; }
+
+    std::any* getMutableContext() { return &context_; }
+
     void send(const string& message);
     void send(Buffer* message);
     void shutdown();
+    void forceClose();
+    void forceCloseInLoop();
 
     void setConnectionCallback(const ConnectionCallback& cb) { connectionCallback_ = cb; }
     void setMessageCallback(const MessageCallback& cb) { messageCallback_ = cb; }
@@ -81,6 +90,7 @@ private:
     CloseCallback closeCallback_;
     size_t highWaterMark_;
 
+    std::any context_;
 };
 
 } // namespace net
