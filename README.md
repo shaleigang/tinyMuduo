@@ -2,6 +2,10 @@
 tinyMuduo是一个简易版本的muduo网络库，消除对Boost的依赖。并在tinyMuduo的基础上，结合protobuf，封装了一个RPC框架。
 For learning purposes only.
 
+TODO:
+  * 实现一个简单的http server
+  * 更新README
+
 ## 1. 简介
 * base
 主要包含封装的Thread、ThreadPool、Logger、TimeStamp类，另外实现了BlockingQueue和CountDownLatch
