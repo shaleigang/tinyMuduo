@@ -9,57 +9,70 @@
 #include <tinyMuduo/net/InetAddress.h>
 #include <tinyMuduo/net/TcpClient.h>
 #include <tinyMuduo/net/rpc/RpcChannel.h>
+#include <tinyMuduo/net/rpc/RpcClient.h>
+
+#include <unistd.h>
 
 using namespace tmuduo;
 using namespace tmuduo::net;
 
-class RpcClient : noncopyable {
+class myClient {
 public:
-    RpcClient(EventLoop* loop, const InetAddress& serverAddr)
-            : loop_(loop),
-              client_(loop, serverAddr, "RpcClient"),
-              channel_(new RpcChannel),
-              stub_(channel_.get()) {
-        client_.setConnectionCallback(
-                std::bind(&RpcClient::onConnection, this, _1));
-        client_.setMessageCallback(
-                std::bind(&RpcChannel::onMessage, channel_.get(), _1, _2, _3));
-        // client_.enableRetry();
+    myClient(EventLoop* loop, const InetAddress& serverAddr)
+      : loop_(loop),
+        client_(loop, serverAddr) {
+        client_.setNewConnectionCallback(std::bind(&myClient::onConnection, this, _1));
+    }
+
+    void orderTask() {
+        loop_->runInLoop(std::bind(&myClient::makeOrder, this));
     }
 
     void connect() {
         client_.connect();
     }
-private:
-    void onConnection(const TcpConnectionPtr& conn) {
-        if (conn->connected()) {
-            channel_->setConnection(conn);
-            makeOrderRequest request;
-            makeOrderResponse* response = new makeOrderResponse;
-            stub_.makeOrder(nullptr, &request, response, NewCallback(this, &RpcClient::getResp, response));
-        }
-        else {
-            loop_->quit();
-        }
-    }
-    void getResp(makeOrderResponse* resp) {
-        LOG_INFO("getResponse2 %s", resp->res_info().c_str());
+
+    void disconnect() {
         client_.disconnect();
     }
 
-    EventLoop* loop_;
-    TcpClient client_;
-    RpcChannelPtr channel_;
-    Order::Stub stub_;
+private:
+    void makeOrder() {
+        makeOrderRequest request;
+        makeOrderResponse* response = new makeOrderResponse;
+        stub_->makeOrder(nullptr, &request, response, NewCallback(this, &myClient::getResp, response));
+    }
 
+    void getResp(makeOrderResponse* resp) {
+        LOG_INFO("getResponse %s", resp->res_info().c_str());
+    }
+
+    void onConnection(const TcpConnectionPtr& conn) {
+        LOG_DEBUG("stub_ init");
+        stub_ = new Order::Stub(std::any_cast<std::shared_ptr<RpcChannel>>(conn->getContext()).get());
+    }
+
+    EventLoop* loop_;
+    RpcClient client_;
+    Order::Stub* stub_;
 };
+
+void add(myClient* client) {
+    while(1) {
+        sleep(1);
+        LOG_DEBUG("add task");
+        client->orderTask();
+    }
+}
 
 int main(int argc, char* argv[]) {
     EventLoop loop;
     InetAddress serverAddr("127.0.0.1", 9981);
 
-    RpcClient rpcClient(&loop, serverAddr);
+    myClient rpcClient(&loop, serverAddr);
     rpcClient.connect();
+    std::thread t(add, &rpcClient);
     loop.loop();
+
     google::protobuf::ShutdownProtobufLibrary();
 }
