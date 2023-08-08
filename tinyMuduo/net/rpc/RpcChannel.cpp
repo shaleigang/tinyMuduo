@@ -41,7 +41,7 @@ void RpcChannel::onMessage(const tmuduo::net::TcpConnectionPtr &conn, tmuduo::ne
             }
         }
         else {
-            size_t i = message->m_method_name.find_first_of('.');
+            size_t i = message->m_method_name.find_last_of('.');
             string service_name = message->m_method_name.substr(0, i);
             string method_name = message->m_method_name.substr(i + 1, message->m_method_name.length() - i - 1);
 
