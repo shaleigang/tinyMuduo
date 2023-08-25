@@ -6,6 +6,7 @@
 #define TINYMUDUO_ABSTRACT_PROTOCOL_H
 
 #include <memory>
+#include <string>
 
 namespace tmuduo {
 namespace net {
