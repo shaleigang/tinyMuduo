@@ -36,10 +36,10 @@ private:
 
 // C风格日志记录，通过...实现可变参数
 // 在宏中，使用##__VA_ARGS__进行可变参数传递
-#define LOG_INFO(logMsgFormat, ...) tmuduo::Logger::instance().log(Logger::INFO, logMsgFormat, ##__VA_ARGS__)
-#define LOG_ERROR(logMsgFormat, ...) tmuduo::Logger::instance().log(Logger::ERROR, logMsgFormat, ##__VA_ARGS__)
-#define LOG_FATAL(logMsgFormat, ...) tmuduo::Logger::instance().log(Logger::FATAL, logMsgFormat, ##__VA_ARGS__)
-#define LOG_DEBUG(logMsgFormat, ...) tmuduo::Logger::instance().log(Logger::DEBUG, logMsgFormat, ##__VA_ARGS__)
+#define LOG_INFO(logMsgFormat, ...) Logger::instance().log(Logger::INFO, logMsgFormat, ##__VA_ARGS__)
+#define LOG_ERROR(logMsgFormat, ...) Logger::instance().log(Logger::ERROR, logMsgFormat, ##__VA_ARGS__)
+#define LOG_FATAL(logMsgFormat, ...) Logger::instance().log(Logger::FATAL, logMsgFormat, ##__VA_ARGS__)
+#define LOG_DEBUG(logMsgFormat, ...) Logger::instance().log(Logger::DEBUG, logMsgFormat, ##__VA_ARGS__)
 
 
 } // namespace tmuduo
