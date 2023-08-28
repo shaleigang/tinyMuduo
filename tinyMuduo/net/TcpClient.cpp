@@ -36,7 +36,7 @@ TcpClient::TcpClient(EventLoop *loop, const InetAddress &serverAddr, const std::
     connectionCallback_(defaultConnectionCallback),
     messageCallback_(defaultMessageCallback),
     retry_(false),
-    connect_(true),
+    connect_(false),
     nextConnId_(1) {
     connector_->setConnectionCallback(std::bind(&TcpClient::newConnection, this, _1));
     LOG_INFO("TcpClient::TcpClient %s - connector.", name_.c_str());
