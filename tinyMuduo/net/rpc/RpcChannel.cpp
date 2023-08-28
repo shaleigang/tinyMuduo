@@ -47,7 +47,7 @@ void RpcChannel::onMessage(const tmuduo::net::TcpConnectionPtr &conn, tmuduo::ne
 
             const auto it = services_->find(service_name);
             if(it == services_->end()) {
-                LOG_INFO("can not find service %s", message->m_method_name.c_str());
+                LOG_INFO("can not find service %s", service_name.c_str());
                 continue;
             }
             else {
